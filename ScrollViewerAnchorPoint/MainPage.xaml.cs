@@ -38,21 +38,29 @@ namespace ScrollViewerAnchorPoint
         {
         }
 
-        private void TestButton_Click(object sender, RoutedEventArgs e)
+        private Grid CreateView()
         {
             var r = new Random();
             var rgb = new byte[3];
             r.NextBytes(rgb);
             var color = Color.FromArgb(byte.MaxValue, rgb[0], rgb[1], rgb[2]);
 
-            var grid = new Grid
+            return new Grid
             {
                 Width = TestScrollViewer.Width,
                 Height = 100,
                 Background = new SolidColorBrush(color),
             };
+        }
 
-            TestContent.Children.Insert(0, grid);
+        private void InsertButton_Click(object sender, RoutedEventArgs e)
+        {
+            TestContent.Children.Insert(0, CreateView());
+        }
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            TestContent.Children.Add(CreateView());
         }
 
         private void ScrollButton_Click(object sender, RoutedEventArgs e)
