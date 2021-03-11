@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -23,6 +26,8 @@ namespace ScrollViewerAnchorPoint
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private const string LOREM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam auctor orci ac tortor dapibus laoreet.";
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -30,50 +35,48 @@ namespace ScrollViewerAnchorPoint
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            TestScrollViewer.AnchorRequested += TestScrollViewer_AnchorRequested;
             base.OnNavigatedTo(e);
+            TestContent.Children.Clear();
+            TestScrollViewer.VerticalAnchorRatio = 1.0;
+            Enumerable.Repeat(0, 15)
+                .Select((_, i) => CreateView(extraText: LOREM))
+                .ToList()
+                .ForEach(TestContent.Children.Add);
         }
 
-        private void TestScrollViewer_AnchorRequested(ScrollViewer sender, AnchorRequestedEventArgs args)
-        {
-        }
-
-        private Grid CreateView()
+        private Grid CreateView(string extraText = null, bool canBeScrollAnchor = false)
         {
             var r = new Random();
             var rgb = new byte[3];
             r.NextBytes(rgb);
             var color = Color.FromArgb(byte.MaxValue, rgb[0], rgb[1], rgb[2]);
 
-            return new Grid
+            var grid = new Grid
             {
                 Width = TestScrollViewer.Width,
-                Height = 100,
                 Background = new SolidColorBrush(color),
             };
-        }
 
-        private void InsertButton_Click(object sender, RoutedEventArgs e)
-        {
-            TestContent.Children.Insert(0, CreateView());
-        }
-
-        private void AddButton_Click(object sender, RoutedEventArgs e)
-        {
-            TestContent.Children.Add(CreateView());
-        }
-
-        private void ScrollButton_Click(object sender, RoutedEventArgs e)
-        {
-            TestScrollViewer.ChangeView(0, TestContent.ActualHeight - TestScrollViewer.ActualHeight, 1);
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (double.TryParse(((TextBox)sender).Text, out var value) && value >= 0 && value <= 1)
+            var text = new TextBlock
             {
-                TestScrollViewer.VerticalAnchorRatio = value;
-            }
+                Text = $"CanBeScrollAnchor == {canBeScrollAnchor}{(extraText != null ? "\n" + extraText : string.Empty)}",
+                Margin = new Thickness(30),
+                TextWrapping = TextWrapping.Wrap,
+            };
+
+            grid.Children.Add(text);
+
+            grid.PointerPressed += Grid_PointerPressed;
+
+            return grid;
+        }
+
+        private void Grid_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            var grid = (Grid)sender;
+            grid.CanBeScrollAnchor = !grid.CanBeScrollAnchor;
+            var textBlock = (TextBlock)grid.Children[0];
+            textBlock.Text = textBlock.Text.Replace((!grid.CanBeScrollAnchor).ToString(), grid.CanBeScrollAnchor.ToString());
         }
     }
 }
