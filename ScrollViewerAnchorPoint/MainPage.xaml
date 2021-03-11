@@ -9,28 +9,8 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Button Content="Insert View At Top" Click="InsertButton_Click" />
-        <Button Content="Add View At Bottom" Click="AddButton_Click" Grid.Column="1" />
-        <Button Content="Scroll To Bottom" Click="ScrollButton_Click" Grid.Column="2" />
-        <TextBox PlaceholderText="VerticalAnchorRatio" TextChanged="TextBox_TextChanged" Grid.Column="3" />
-        <ScrollViewer x:Name="TestScrollViewer" Width="300" Height="300" Grid.ColumnSpan="4" Grid.Row="1">
+        <ScrollViewer x:Name="TestScrollViewer">
             <StackPanel x:Name="TestContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Grid Width="300" Height="100" Background="Red" />
-                <Grid Width="300" Height="100" Background="Orange" />
-                <Grid Width="300" Height="100" Background="Yellow" />
-                <Grid Width="300" Height="100" Background="Green" />
-                <Grid Width="300" Height="100" Background="Blue" />
-                <Grid Width="300" Height="100" Background="Purple" />
             </StackPanel>
         </ScrollViewer>
     </Grid>
